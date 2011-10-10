@@ -168,13 +168,22 @@ var Box = new Class({
 		var new_dimensions = this._getElementDimensions(element, true); 
 
 		// Calculate width and height resize jump
-		new_dimensions.height = Math.round(new_dimensions.height / this.options.resize.jump_height) * this.options.resize.jump_height;
-		new_dimensions.width = Math.round(new_dimensions.width / this.options.resize.jump_width) * this.options.resize.jump_width;
+		new_dimensions.height = Math.floor((new_dimensions.height - this.options.resize.minimal_height) / this.options.resize.jump_height) * this.options.resize.jump_height;
+		new_dimensions.width = Math.floor((new_dimensions.width - this.options.resize.minimal_width) / this.options.resize.jump_width) * this.options.resize.jump_width;
+		
+		if (new_dimensions.height > 0)
+		{
+			new_dimensions.height += this.options.resize.minimal_height;
+		}
+		if (new_dimensions.width > 0)
+		{
+			new_dimensions.width += this.options.resize.minimal_width;
+		} 
 		if (new_dimensions.height > this.options.resize.maximal_height)
 		{
 			new_dimensions.height = this.options.resize.maximal_height;
 		}
-		if (new_dimensions.height < this.options.resize.minimal_height)
+		if (new_dimensions.height < this.options.resize.minimal_height || new_dimensions.height <= 0)
 		{
 			new_dimensions.height = this.options.resize.minimal_height;
 		}
@@ -182,7 +191,7 @@ var Box = new Class({
 		{
 			new_dimensions.width = this.options.resize.maximal_width;
 		}
-		if (new_dimensions.width < this.options.resize.minimal_width)
+		if (new_dimensions.width < this.options.resize.minimal_width || new_dimensions.width <= 0)
 		{
 			new_dimensions.width = this.options.resize.minimal_width;
 		}
@@ -402,6 +411,7 @@ var Box = new Class({
 					this._board._boxes.push(this);
 					this.render();
 					this._board.view.grab(this.view);
+					this.fireEvent('create', this);
 					this._setDimensions(new_dimensions);	
 				}
 			}
@@ -521,17 +531,21 @@ var Box = new Class({
 				return;
 			}
 			event = new Event(event).stop();
+			
+			// Make clone of HTML object
 			if (this._pallete)
 			{
-				var view = this._renderOnBoard(); 
+				this.destroy();
+				this.view = this._renderOnBoard();
+				this._pallete.view.grab(this.view);
+				this.fireEvent('create', this);
+				var clone = this.view.clone();
 			}
 			else
 			{
-				var view = this.view;
+				var clone = this.view.clone();
 			}
-	
-			// Make clone of HTML object		
-			var clone = view.clone(); 
+	 
 			clone.addClass('clone_box');
 			clone_id = 'clone_'+this.id;
 			clone.set('id', clone_id);
