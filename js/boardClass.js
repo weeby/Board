@@ -61,6 +61,7 @@ var Board = new Class({
 	 */
 	checkBoxNewDimensions: function(box, dimensions)
 	{	
+		
 		var self = this;
 		if (!dimensions || !box)
 		{
@@ -82,17 +83,7 @@ var Board = new Class({
 		{
 			return false;
 		}
-		// Box is to small (width)
-		if (box.options.resize.minimal_width > dimensions.width)
-		{
-			return false;
-		}
-		// Box is to small (height)
-		if (box.options.resize.minimal_height > dimensions.height)
-		{
-			return false;
-		}
-		
+
 		// Check all boxes (if someone is on the way then box cannot be resized or moved to selected position
 		var box_on_way = false;
 		this._boxes.each(function(item) {
@@ -109,6 +100,7 @@ var Board = new Class({
 				}
 			}
 		});
+		console.log(box_on_way);
 		
 		return !box_on_way;
 		

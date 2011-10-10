@@ -170,6 +170,22 @@ var Box = new Class({
 		// Calculate width and height resize jump
 		new_dimensions.height = Math.round(new_dimensions.height / this.options.resize.jump_height) * this.options.resize.jump_height;
 		new_dimensions.width = Math.round(new_dimensions.width / this.options.resize.jump_width) * this.options.resize.jump_width;
+		if (new_dimensions.height > this.options.resize.maximal_height)
+		{
+			new_dimensions.height = this.options.resize.maximal_height;
+		}
+		if (new_dimensions.height < this.options.resize.minimal_height)
+		{
+			new_dimensions.height = this.options.resize.minimal_height;
+		}
+		if (new_dimensions.width > this.options.resize.maximal_width)
+		{
+			new_dimensions.width = this.options.resize.maximal_width;
+		}
+		if (new_dimensions.width < this.options.resize.minimal_width)
+		{
+			new_dimensions.width = this.options.resize.minimal_width;
+		}
 		
 		// Check if new dimensions are correct grid dimensions 
 		if (!this._board.checkBoxNewDimensions(this, new_dimensions))
