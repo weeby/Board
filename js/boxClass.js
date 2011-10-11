@@ -301,12 +301,12 @@ var Box = new Class({
 		var drag_coordinates = element.getCoordinates();
 		var drop_coordinates = this._board.view.getCoordinates();
 
-		var box_layout = element.getLayout();
-		var board_layout = this._board.view.getLayout();
+		var box_layout = element.getComputedSize();
+		var board_layout = this._board.view.getComputedSize();
 	
 		var dimensions = {
-			'left': drag_coordinates.left - box_layout.layout_horizontal - (drop_coordinates.left - board_layout.layout_horizontal),
-			'top': drag_coordinates.top - box_layout.layout_vertical - (drop_coordinates.top - board_layout.layout_vertical) ,
+			'left': drag_coordinates.left - (box_layout.computedLeft + box_layout.computedRight) - (drop_coordinates.left - (board_layout.computedLeft + board_layout.computedRight)),
+			'top': drag_coordinates.top - (box_layout.computedLeft + box_layout.computedRight) - (drop_coordinates.top - (board_layout.computedTop + board_layout.computedBottom)) ,
 			'width': drag_coordinates.width,
 			'height': drag_coordinates.height,
 		};
@@ -414,14 +414,18 @@ var Box = new Class({
 					this.fireEvent('create', this);
 					this._setDimensions(new_dimensions);	
 				}
+				else
+				{
+					// Back to pallete
+					this._board.moveToPallete(this);
+				}
 			}
 			else
 			{
 				// Normaly drop box
 				var new_dimensions = this._getElementDimensions(drag, true);
 				this._setDimensions(new_dimensions);	
-			}
-			
+			}	
 			this.view.fade('in');	
 		}
 		// Droped out of board
